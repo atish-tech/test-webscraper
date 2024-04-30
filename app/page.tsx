@@ -6,26 +6,26 @@ import { jsonToJSXLogic } from "@/utils/json-head";
 
 export async function getData() {
   const response = await fetch(webScraperRoutes, {
-    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-    cache: "force-cache",
   });
-  return await response.json();
+  // cache: "force-cache",  // removed bcz of dev mode
+
+  return (await response.json()).val;
 }
 
 export default async function Home() {
-  const response = await getData();
+  const response: WebPageData[] = await getData();
 
   let htmlResponse = "";
-  if (response.responseText[0].startsWith("<!doctype html>")) {
-    htmlResponse = response.responseText[0];
+  if (response[0].responseText.startsWith("<!doctype html>")) {
+    htmlResponse = response[0].responseText;
   }
 
   const json: any = parse(htmlResponse);
 
-  let headJson = {};
+  let headJson;
   if (
     json.length > 1 &&
     json[1]?.children?.length > 0 &&
@@ -35,14 +35,13 @@ export default async function Home() {
   }
 
   const headData = jsonToJSXLogic(headJson);
-  console.log(headData);
-  
+  console.log("headData", headData);
 
   return (
     <>
       <Head>
         <title>Web Scraper</title>
-        {headData}
+        {/* {headData} */}
       </Head>
     </>
   );
