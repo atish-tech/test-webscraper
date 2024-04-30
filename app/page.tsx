@@ -62,7 +62,7 @@ export default function Home() {
         <title>Medium</title>
         <meta name="description" content="Medium Article" />
         {nextFont}
-      </Head>
+      </Head> 
 
       <main>
         {divTag}
