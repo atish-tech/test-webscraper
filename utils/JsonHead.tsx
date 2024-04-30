@@ -1,5 +1,7 @@
-export const jsonToJSXLogic = (data: any) => {
-  let jsxElement: any = "";
+import { HtmlElementToJsonType } from "./InterfaceType";
+
+export const jsonToJSXLogic = (data: HtmlElementToJsonType) => {
+  let jsxElement = "";
 
   if (
     data.tagName === "head" ||
@@ -11,6 +13,8 @@ export const jsonToJSXLogic = (data: any) => {
     return "";
   }
 
+
+ 
   data?.attributes?.forEach((attri: any) => {
     jsxElement += ` ${attri.key}="${attri.value}"`;
   });

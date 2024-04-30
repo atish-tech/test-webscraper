@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import puppeteer, { HTTPResponse } from "puppeteer";
 import { HTTPRequest } from "puppeteer";
-import { WebPageData } from "@/utils/interface-type";
+import { WebPageData } from "@/utils/InterfaceType";
 import {
   INCLUDED_DOMAINS,
   INCLUDED_RESOURCE_TYPE,
-} from "@/utils/web-scrapper-contants";
+} from "@/utils/WebScrapperContants";
 
 export async function GET() {
   const url =

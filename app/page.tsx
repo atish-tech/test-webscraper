@@ -1,8 +1,8 @@
-import { webScraperRoutes } from "@/utils/api-routes";
-import { WebPageData } from "@/utils/interface-type";
+import { webScraperRoutes } from "@/utils/ApiRoutes";
+import { HtmlElementToJsonType, WebPageData } from "@/utils/InterfaceType";
 import Head from "next/head";
 import { parse } from "himalaya";
-import { jsonToJSXLogic } from "@/utils/json-head";
+import { jsonToJSXLogic } from "@/utils/JsonHead";
 
 export async function getData() {
   const response = await fetch(webScraperRoutes, {
@@ -10,32 +10,44 @@ export async function getData() {
       "Content-Type": "application/json",
     },
   });
-  // cache: "force-cache",  // removed bcz of dev mode
-
+  
   return (await response.json()).val;
 }
 
 export default async function Home() {
   const response: WebPageData[] = await getData();
 
-  let htmlResponse = "";
-  if (response[0].responseText.startsWith("<!doctype html>")) {
-    htmlResponse = response[0].responseText;
+  let htmlResponse: string = "";
+
+  const htmlResponseItem = response.find((item) =>
+    item.responseText.startsWith("<!doctype html>")
+  );
+
+  if (htmlResponseItem) {
+    htmlResponse = htmlResponseItem.responseText;
   }
 
-  const json: any = parse(htmlResponse);
+  const htmlBodyJson: HtmlElementToJsonType[] = parse(
+    htmlResponse
+  ) as unknown as HtmlElementToJsonType[];
 
-  let headJson;
-  if (
-    json.length > 1 &&
-    json[1]?.children?.length > 0 &&
-    json[1]?.children[0].tagName === "head"
-  ) {
-    headJson = json[1]?.children[0];
+  let headJson: HtmlElementToJsonType = {} as HtmlElementToJsonType;
+
+  const headElement = htmlBodyJson.find((element) =>
+    element.children?.some((child) => child.tagName === "head")
+  );
+
+  if (headElement) {
+    const headChild = headElement.children?.find(
+      (child) => child.tagName === "head"
+    );
+    if (headChild) {
+      headJson = headChild;
+    }
   }
 
   const headData = jsonToJSXLogic(headJson);
-  console.log("headData", headData);
+  console.log(headData);
 
   return (
     <>
