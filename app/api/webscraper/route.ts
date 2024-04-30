@@ -30,7 +30,6 @@ export async function GET() {
   });
 
   page.on("response", async (response: HTTPResponse) => {
-
     let temp: WebPageData = {
       url: "",
       resourceType: "",
@@ -64,5 +63,5 @@ export async function GET() {
 
   await browser.close();
 
-  return NextResponse.json({ data: pageData }, { status: 200 });
+  return NextResponse.json({ val: pageData }, { status: 200 });
 }
