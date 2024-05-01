@@ -6,7 +6,7 @@ export const jsonToJSXLogic = (data: HtmlElementToJsonType) => {
   if (
     data.tagName === "head" ||
     (data.tagName === "link" &&
-      data.attributes?.some((attr: any) => attr.value == "preconnect"))
+      data.attributes?.some((attr) => attr.value == "preconnect"))
   ) {
     jsxElement += `<${data.tagName}`;
   } else {
@@ -14,8 +14,19 @@ export const jsonToJSXLogic = (data: HtmlElementToJsonType) => {
   }
 
 
+  // const filteredData = data.children.filter(item =>
+  //   item.tagName === "head" ||
+  //   (item.tagName === "link" && item.attributes?.some((attr) => attr.value == "preconnect"))
+  // );
+  
+  // const jsxElements = filteredData.map(item => `<${item.tagName}`);
+
+
+
+  // console.log(jsxElements);
+  
  
-  data?.attributes?.forEach((attri: any) => {
+  data?.attributes?.forEach((attri) => {
     jsxElement += ` ${attri.key}="${attri.value}"`;
   });
 
@@ -26,7 +37,7 @@ export const jsonToJSXLogic = (data: HtmlElementToJsonType) => {
   }
 
   if (data.children) {
-    data.children.forEach((child: any) => {
+    data.children.forEach((child) => {
       jsxElement += jsonToJSXLogic(child);
     });
   }

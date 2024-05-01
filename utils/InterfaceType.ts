@@ -14,5 +14,7 @@ export interface HtmlElementToJsonType {
   type: string;
   tagName: string;
   attributes: Array<{ key: string; value: string }>;
+  text?: string;
+  content?: string;
   children: HtmlElementToJsonType[];
 }

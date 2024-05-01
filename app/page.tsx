@@ -1,8 +1,7 @@
 import { webScraperRoutes } from "@/utils/ApiRoutes";
 import { HtmlElementToJsonType, WebPageData } from "@/utils/InterfaceType";
-import Head from "next/head";
 import { parse } from "himalaya";
-import { jsonToJSXLogic } from "@/utils/JsonHead";
+import { CustomHead } from "@/components/CustomHead";
 
 export async function getData() {
   const response = await fetch(webScraperRoutes, {
@@ -10,51 +9,32 @@ export async function getData() {
       "Content-Type": "application/json",
     },
   });
-  
+
   return (await response.json()).val;
 }
 
 export default async function Home() {
   const response: WebPageData[] = await getData();
 
-  let htmlResponse: string = "";
-
-  const htmlResponseItem = response.find((item) =>
-    item.responseText.startsWith("<!doctype html>")
-  );
-
-  if (htmlResponseItem) {
-    htmlResponse = htmlResponseItem.responseText;
-  }
+  const htmlResponseItem: WebPageData =
+    response.find((item) => item.responseText.startsWith("<!doctype html>")) ||
+    ({} as WebPageData);
 
   const htmlBodyJson: HtmlElementToJsonType[] = parse(
-    htmlResponse
+    htmlResponseItem?.responseText
   ) as unknown as HtmlElementToJsonType[];
 
-  let headJson: HtmlElementToJsonType = {} as HtmlElementToJsonType;
-
-  const headElement = htmlBodyJson.find((element) =>
-    element.children?.some((child) => child.tagName === "head")
-  );
-
-  if (headElement) {
-    const headChild = headElement.children?.find(
-      (child) => child.tagName === "head"
-    );
-    if (headChild) {
-      headJson = headChild;
-    }
-  }
-
-  const headData = jsonToJSXLogic(headJson);
-  console.log(headData);
+  const headJson: HtmlElementToJsonType =
+    htmlBodyJson
+      .find((element) =>
+        element?.children.some((child) => child.tagName === "head")
+      )
+      ?.children?.find((child) => child.tagName === "head") ||
+    ({} as HtmlElementToJsonType);
 
   return (
     <>
-      <Head>
-        <title>Web Scraper</title>
-        {/* {headData} */}
-      </Head>
+      <CustomHead headJson={headJson} />
     </>
   );
 }
