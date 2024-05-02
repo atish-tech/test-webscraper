@@ -4,6 +4,9 @@ import { MetaTagList } from "./MetaTagList";
 import { LinkTagList } from "./LinkTagList";
 import { StyleTagList } from "./StyleTagList";
 import { ScriptTagList } from "./ScriptTagList";
+import { Inter } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"] });
 
 interface CustomHeadPropsType {
   headJson: HtmlElementToJsonType;
@@ -39,15 +42,13 @@ export const CustomHead = ({ headJson }: CustomHeadPropsType) => {
 
   return (
     // head tag is not working still i'm fiugring out the issue, but when i remove head tag it's working fine
-   <>
-    <Head>
+    <div>
       <title>{titleElementContent?.content}</title>
 
       <MetaTagList metaElements={metaElements} />
       <LinkTagList linkElements={linkElements} />
       <StyleTagList styleElements={styleElements} />
       <ScriptTagList scriptElements={scriptElements} />
-    </Head>
-   </>
+    </div>
   );
 };

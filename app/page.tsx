@@ -1,7 +1,8 @@
 import { webScraperRoutes } from "@/utils/ApiRoutes";
 import { HtmlElementToJsonType, WebPageData } from "@/utils/InterfaceType";
 import { parse } from "himalaya";
-import { CustomHead } from "@/components/CustomHead";
+import { CustomHead } from "@/components/Head/CustomHead";
+import { CustomBody } from "@/components/Body/CustomeBody";
 
 export async function getData() {
   const response = await fetch(webScraperRoutes, {
@@ -32,9 +33,19 @@ export default async function Home() {
       ?.children?.find((child) => child.tagName === "head") ||
     ({} as HtmlElementToJsonType);
 
+  const bodyJson: HtmlElementToJsonType =
+    htmlBodyJson
+      .find((element) =>
+        element?.children.some((child) => child.tagName === "body")
+      )
+      ?.children?.find((child) => child.tagName === "body") ||
+    ({} as HtmlElementToJsonType);
+    // console.log(bodyJson);
+    
   return (
     <>
       <CustomHead headJson={headJson} />
+      <CustomBody bodyJson={bodyJson} />
     </>
   );
 }
