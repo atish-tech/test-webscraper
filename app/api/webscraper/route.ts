@@ -8,7 +8,9 @@ import {
 } from "@/utils/WebScrapperContants";
 
 export async function GET() {
-  const url = "https://medium.com/nerd-for-tech/workflow-for-switching-github-accounts-in-your-terminal-d87e50bb5511";
+  const url =
+    "https://medium.com/nerd-for-tech/workflow-for-switching-github-accounts-in-your-terminal-d87e50bb5511";
+  // const url = "https://www.scaler.com/topics/default-argument-in-cpp/";
 
   const browser = await puppeteer.launch();
   const page = await browser.newPage();

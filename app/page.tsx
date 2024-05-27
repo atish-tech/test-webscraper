@@ -40,8 +40,7 @@ export default async function Home() {
       )
       ?.children?.find((child) => child.tagName === "body") ||
     ({} as HtmlElementToJsonType);
-    // console.log(bodyJson);
-    
+
   return (
     <>
       <CustomHead headJson={headJson} />

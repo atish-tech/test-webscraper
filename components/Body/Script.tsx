@@ -1,3 +1,15 @@
-export const Script = ({ attribute, children }: { attribute: Record<string, string>; children: React.ReactNode }) => {
-    return <script {...attribute}>{children}</script>;
-    };
+import Script from "next/script";
+
+export const NextScript = ({
+  attribute,
+  children,
+}: {
+  attribute: Record<string, string>;
+  children?: React.ReactNode;
+}) => {
+  return (
+    <>
+      <Script {...attribute}>{children}</Script>
+    </>
+  );
+};

@@ -5,7 +5,6 @@ export const NextImage = ({
 }: {
   attribute: Record<string, string>;
 }) => {
-
   return (
     <Image
       loading="lazy"

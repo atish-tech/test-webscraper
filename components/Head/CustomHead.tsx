@@ -1,10 +1,11 @@
 import { HtmlElementToJsonType } from "@/utils/InterfaceType";
-import Head from "next/head";
+// import Head from "next/head";
 import { MetaTagList } from "./MetaTagList";
 import { LinkTagList } from "./LinkTagList";
 import { StyleTagList } from "./StyleTagList";
 import { ScriptTagList } from "./ScriptTagList";
 import { Inter } from "next/font/google";
+import { Metadata } from "next";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -40,15 +41,16 @@ export const CustomHead = ({ headJson }: CustomHeadPropsType) => {
       (child) => child.content
     ) as HtmlElementToJsonType;
 
+  console.log("title element", titleElementContent);
+
   return (
-    // head tag is not working still i'm fiugring out the issue, but when i remove head tag it's working fine
-    <div>
+    <>
       <title>{titleElementContent?.content}</title>
 
       <MetaTagList metaElements={metaElements} />
       <LinkTagList linkElements={linkElements} />
       <StyleTagList styleElements={styleElements} />
       <ScriptTagList scriptElements={scriptElements} />
-    </div>
+    </>
   );
 };

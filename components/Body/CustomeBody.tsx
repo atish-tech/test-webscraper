@@ -1,3 +1,4 @@
+"use client";
 import { HtmlElementToJsonType } from "@/utils/InterfaceType";
 import React from "react";
 import { NextImage } from "./NextImage";
@@ -6,7 +7,7 @@ import { HR } from "./HR";
 import { BR } from "./BR";
 import { Source } from "./Source";
 import { Div } from "./Div";
-import { Script } from "./Script";
+import { NextScript } from "./Script";
 import { P } from "./P";
 import { A } from "./A";
 import { Article } from "./Article";
@@ -24,7 +25,13 @@ import { Strong } from "./Strong";
 import { Em } from "./Em";
 import { Rect } from "./Rect";
 import { Figcaption } from "./Figcaption";
+import { Roboto } from "next/font/google";
 
+const roboto = Roboto({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+});
 interface CustomHeadPropsType {
   bodyJson: HtmlElementToJsonType;
 }
@@ -67,7 +74,7 @@ const Element = ({ element }: { element: HtmlElementToJsonType }) => {
           );
 
         // after { flex: '1' }
-        acc[attr.key] = styleObject;
+        acc[attr.key] = styleObject; //@ignore
       } else {
         acc[attr.key] = attr.value;
       }
@@ -80,18 +87,15 @@ const Element = ({ element }: { element: HtmlElementToJsonType }) => {
     if (element.tagName === "img" || element.tagName === "picture") {
       return <NextImage attribute={attributes} />;
     } else if (element.tagName === "source") {
-      return <Source attribute={attributes} />;
+      return <NextImage attribute={attributes} />;
     } else if (element.tagName === "input") {
       return <Input attribute={attributes} />;
     } else if (element.tagName === "hr") {
       return <HR attribute={attributes} />;
     } else if (element.tagName === "br") {
       return <BR attribute={attributes} />;
-    } else return null; // React.createElement(element.tagName, attributes);
-  } 
-  
-  
-  else {
+    } else return React.createElement(element.tagName, attributes);
+  } else {
     if (element.tagName === "div") {
       return (
         <Div attribute={attributes}>
@@ -106,7 +110,7 @@ const Element = ({ element }: { element: HtmlElementToJsonType }) => {
       );
     } else if (element.tagName === "script") {
       return (
-        <Script attribute={attributes}>
+        <NextScript attribute={attributes}>
           {element.children.map((child, index) =>
             child.type === "element" ? (
               <Element key={index} element={child} />
@@ -114,7 +118,7 @@ const Element = ({ element }: { element: HtmlElementToJsonType }) => {
               child.content
             )
           )}
-        </Script>
+        </NextScript>
       );
     } else if (element.tagName === "a") {
       return (
@@ -383,24 +387,24 @@ const Element = ({ element }: { element: HtmlElementToJsonType }) => {
     } else {
       return null;
 
-      //   return React.createElement(
-      //     element.tagName,
-      //     attributes,
-      //     element.children.map((child, index) =>
-      //       child.type === "element" ? (
-      //         <Element key={index} element={child} />
-      //       ) : (
-      //         child.content
-      //       )
-      //     )
-      //   );
+      return React.createElement(
+        element.tagName,
+        attributes,
+        element.children.map((child, index) =>
+          child.type === "element" ? (
+            <Element key={index} element={child} />
+          ) : (
+            child.content
+          )
+        )
+      );
     }
   }
 };
 
 export const CustomBody = ({ bodyJson }: CustomHeadPropsType) => {
   return (
-    <>
+    <div className={roboto.className}>
       {bodyJson.children.map((child, index) =>
         child.type === "element" ? (
           <Element key={index} element={child} />
@@ -408,6 +412,6 @@ export const CustomBody = ({ bodyJson }: CustomHeadPropsType) => {
           child.content
         )
       )}
-    </>
+    </div>
   );
 };
