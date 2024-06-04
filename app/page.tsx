@@ -5,21 +5,18 @@ import { CustomHead } from "@/components/Head/CustomHead";
 import { CustomBody } from "@/components/Body/CustomeBody";
 import axios from "axios";
 
-export async function getData(url: string) {
-  // const response = await fetch(webScraperRoutes, {
+export async function getData(webUrl: string) {
+  // const response = await fetch(`/api/webscraper/?url=${url}`, {
   //   headers: {
   //     "Content-Type": "application/json",
   //   },
   // });
   // return (await response.json()).val;
 
-  const response = await axios.get(webScraperRoutes, {
+  const response = await axios.get(webScraperRoutes + `/?url=${webUrl}`, {
     headers: {
       "User-Agent":
         "Mozilla/5.0 (Linux; Android 9; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36",
-    },
-    params: {
-      url,
     },
   });
   return response.data.val;
