@@ -8,7 +8,7 @@ export const LinkTagList = ({
 }) => {
   return (
     <>
-      {linkElements?.map((link) => {
+      {linkElements?.map((link, index) => {
         const attributes: Record<string, string> = link.attributes.reduce(
           (acc: Record<string, string>, attr: Record<string, string>) => {
             acc[attr.key] = attr.value;
@@ -42,7 +42,7 @@ export const LinkTagList = ({
           }
         }
 
-        return <link {...attributes} />;
+        return <link key={index} {...attributes} />;
       })}
     </>
   );

@@ -7,7 +7,7 @@ export const StyleTagList = ({
 }) => {
   return (
     <>
-      {styleElements?.map((style) => {
+      {styleElements?.map((style, index) => {
         const styleData = style.children.find((child) => child.content);
 
         const attributes = style.attributes.reduce(
@@ -18,7 +18,11 @@ export const StyleTagList = ({
           {} as Record<string, string>
         );
 
-        return <style {...attributes}>{styleData?.content}</style>;
+        return (
+          <style key={index} {...attributes}>
+            {styleData?.content}
+          </style>
+        );
       })}
     </>
   );

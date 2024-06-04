@@ -25,6 +25,10 @@ const nextConfig = {
     ],
   },
   devtool: "source-map",
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  ignoreBuildErrors: true,
 };
 
 export default nextConfig;

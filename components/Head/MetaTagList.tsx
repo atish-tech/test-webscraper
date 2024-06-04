@@ -7,7 +7,7 @@ export const MetaTagList = ({
 }) => {
   return (
     <>
-      {metaElements?.map((meta) => {
+      {metaElements?.map((meta, index) => {
         const attributes: Record<string, string> = meta.attributes.reduce(
           (acc: Record<string, string>, attr: Record<string, string>) => {
             acc[attr.key] = attr.value;
@@ -20,7 +20,7 @@ export const MetaTagList = ({
         //   console.log("meta tag", attributes);
         // }
 
-        return <meta {...attributes} />;
+        return <meta key={index} {...attributes} />;
       })}
     </>
   );

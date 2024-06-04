@@ -3,13 +3,17 @@ import Script from "next/script";
 export const NextScript = ({
   attribute,
   children,
+  key,
 }: {
   attribute: Record<string, string>;
   children?: React.ReactNode;
+  key: number;
 }) => {
   return (
     <>
-      <Script {...attribute}>{children}</Script>
+      <Script key={key} {...attribute}>
+        {children}
+      </Script>
     </>
   );
 };

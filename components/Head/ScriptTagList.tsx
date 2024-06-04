@@ -8,7 +8,7 @@ export const ScriptTagList = ({
 }) => {
   return (
     <>
-      {scriptElements?.map((script) => {
+      {scriptElements?.map((script, index) => {
         // const scriptContent: HtmlElementToJsonType = script.children.find(
         //   (child) => child.content
         // ) as HtmlElementToJsonType;
@@ -22,7 +22,7 @@ export const ScriptTagList = ({
         );
         attributes.defer = "true";
 
-        return <NextScript attribute={attributes} />;
+        return <NextScript key={index} attribute={attributes} />;
       })}
     </>
   );
