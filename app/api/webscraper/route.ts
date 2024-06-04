@@ -10,6 +10,9 @@ export async function GET(request: NextRequest) {
   const url: string = searchParams.get("url") as string;
   const domainName: string = new URL(url).hostname;
 
+  console.log("URL: ", url);
+  console.log("Domain Name: ", domainName);
+
   const browser: Browser = await puppeteer.launch();
   const page: Page = await browser.newPage();
 
