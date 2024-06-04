@@ -7,7 +7,7 @@ export const StyleTagList = ({
 }) => {
   return (
     <>
-      {styleElements.map((style) => {
+      {styleElements?.map((style) => {
         const styleData = style.children.find((child) => child.content);
 
         const attributes = style.attributes.reduce(

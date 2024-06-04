@@ -3,48 +3,67 @@ import { HtmlElementToJsonType, WebPageData } from "@/utils/InterfaceType";
 import { parse } from "himalaya";
 import { CustomHead } from "@/components/Head/CustomHead";
 import { CustomBody } from "@/components/Body/CustomeBody";
+import axios from "axios";
 
-export async function getData() {
-  const response = await fetch(webScraperRoutes, {
+export async function getData(url: string) {
+  // const response = await fetch(webScraperRoutes, {
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  // });
+  // return (await response.json()).val;
+
+  const response = await axios.get(webScraperRoutes, {
     headers: {
-      "Content-Type": "application/json",
+      "User-Agent":
+        "Mozilla/5.0 (Linux; Android 9; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36",
+    },
+    params: {
+      url,
     },
   });
-
-  return (await response.json()).val;
+  return response.data.val;
 }
 
-export default async function Home() {
-  const response: WebPageData[] = await getData();
+export default async function Home({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | undefined };
+}) {
+  if (searchParams?.url == undefined) return <div> Url is not valid </div>;
 
-  const htmlResponseItem: WebPageData =
-    response.find((item) => item.responseText.startsWith("<!doctype html>")) ||
-    ({} as WebPageData);
+  const response: WebPageData[] = await getData(searchParams?.url);
 
-  const htmlBodyJson: HtmlElementToJsonType[] = parse(
-    htmlResponseItem?.responseText
-  ) as unknown as HtmlElementToJsonType[];
-
-  const headJson: HtmlElementToJsonType =
-    htmlBodyJson
-      .find((element) =>
-        element?.children.some((child) => child.tagName === "head")
-      )
-      ?.children?.find((child) => child.tagName === "head") ||
-    ({} as HtmlElementToJsonType);
-
-  const bodyJson: HtmlElementToJsonType =
-    htmlBodyJson
-      .find((element) =>
-        element?.children.some((child) => child.tagName === "body")
-      )
-      ?.children?.find((child) => child.tagName === "body") ||
-    ({} as HtmlElementToJsonType);
-
-  return (
-    <>
-      <CustomHead headJson={headJson} />
-      <CustomBody bodyJson={bodyJson} />
-    </>
+  const htmlResponseItem: WebPageData[] = response.filter(
+    (item: WebPageData) => item.resourceType === "document"
   );
+
+  if (htmlResponseItem.length === 0) {
+    return <div> No response </div>;
+  }
+
+  return htmlResponseItem.map((webPage: WebPageData) => {
+    const htmlBodyJson: HtmlElementToJsonType[] = parse(
+      webPage.responseText
+    ) as unknown as HtmlElementToJsonType[];
+
+    const documentJson = htmlBodyJson.filter(
+      (item) => item?.tagName === "html"
+    )[0];
+
+    const headJson = documentJson?.children?.filter(
+      (item) => item?.tagName === "head"
+    )[0];
+
+    const bodyJson = documentJson?.children?.filter(
+      (item) => item?.tagName === "body"
+    )[0];
+
+    return (
+      <>
+        <CustomHead headJson={headJson} />
+        <CustomBody bodyJson={bodyJson} />
+      </>
+    );
+  });
 }

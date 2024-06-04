@@ -7,7 +7,7 @@ export const MetaTagList = ({
 }) => {
   return (
     <>
-      {metaElements.map((meta) => {
+      {metaElements?.map((meta) => {
         const attributes: Record<string, string> = meta.attributes.reduce(
           (acc: Record<string, string>, attr: Record<string, string>) => {
             acc[attr.key] = attr.value;
@@ -15,6 +15,10 @@ export const MetaTagList = ({
           },
           {} as Record<string, string>
         );
+
+        // if (!attributes.hasOwnProperty("name")) {
+        //   console.log("meta tag", attributes);
+        // }
 
         return <meta {...attributes} />;
       })}

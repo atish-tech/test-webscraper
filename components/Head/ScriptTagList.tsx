@@ -8,10 +8,10 @@ export const ScriptTagList = ({
 }) => {
   return (
     <>
-      {scriptElements.map((script) => {
-        const scriptContent: HtmlElementToJsonType = script.children.find(
-          (child) => child.content
-        ) as HtmlElementToJsonType;
+      {scriptElements?.map((script) => {
+        // const scriptContent: HtmlElementToJsonType = script.children.find(
+        //   (child) => child.content
+        // ) as HtmlElementToJsonType;
 
         const attributes: Record<string, string> = script.attributes.reduce(
           (acc: Record<string, string>, attr: Record<string, string>) => {
@@ -20,6 +20,7 @@ export const ScriptTagList = ({
           },
           {} as Record<string, string>
         );
+        attributes.defer = "true";
 
         return <NextScript attribute={attributes} />;
       })}

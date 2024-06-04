@@ -1,411 +1,211 @@
-"use client";
 import { HtmlElementToJsonType } from "@/utils/InterfaceType";
 import React from "react";
-import { NextImage } from "./NextImage";
-import { Input } from "./Input";
-import { HR } from "./HR";
-import { BR } from "./BR";
-import { Source } from "./Source";
-import { Div } from "./Div";
-import { NextScript } from "./Script";
-import { P } from "./P";
-import { A } from "./A";
-import { Article } from "./Article";
-import { Button } from "./Button";
-import { Footer } from "./Footer";
-import { Path } from "./Path";
-import { Section } from "./Section";
-import { Span } from "./Span";
-import { Svg } from "./Svg";
-import { H1, H2, H3, H4, H5, H6 } from "./HTag";
-import { Pre } from "./Pre";
-import { Code } from "./Code";
-import { Figure } from "./Figure";
-import { Strong } from "./Strong";
-import { Em } from "./Em";
-import { Rect } from "./Rect";
-import { Figcaption } from "./Figcaption";
 import { Roboto } from "next/font/google";
+import { NextImage } from "./NextImage";
+import https from "https";
+import { ClientRequest, IncomingMessage } from "http";
 
 const roboto = Roboto({
   weight: "400",
   subsets: ["latin"],
   display: "swap",
 });
+
 interface CustomHeadPropsType {
   bodyJson: HtmlElementToJsonType;
 }
 
-const SELF_CLOSE_TAGS = [
+const SELF_CLOSING_TAGS = [
   "img",
-  "picture",
   "input",
-  "hr",
   "br",
-  "area",
+  "hr",
+  "wbr",
   "base",
+  "area",
   "col",
   "command",
   "embed",
   "keygen",
-  "link",
-  "meta",
   "param",
   "source",
   "track",
-  "wbr",
 ];
 
 const Element = ({ element }: { element: HtmlElementToJsonType }) => {
-  const attributes: Record<string, string> = element.attributes.reduce(
-    (acc: Record<string, string>, attr: Record<string, string>) => {
-      if (attr.key === "style") {
-        // before { key: 'style', value: 'flex:1' }
-
+  const attributes: Record<string, any> = element.attributes.reduce(
+    (acc: Record<string, any>, attr: Record<string, string>) => {
+      let key = attr.key;
+      if (key === "class") {
+        key = "className";
+      }
+      if (key === "style") {
         const styleObject: Record<string, string> = attr.value
-          .split(" ")
+          .split(";")
           .reduce(
             (styleAcc, styleProp) => {
               const [property, value] = styleProp.split(":");
-              styleAcc[property.trim()] = value.trim();
+              if (property && value) {
+                styleAcc[property.trim()] = value.trim();
+              }
               return styleAcc;
             },
             {} as Record<string, string>
           );
 
-        // after { flex: '1' }
-        acc[attr.key] = styleObject; //@ignore
+        // Keep styleObject as an object
+        acc[key] = styleObject;
       } else {
-        acc[attr.key] = attr.value;
+        acc[key] = attr.value;
       }
       return acc;
     },
-    {} as Record<string, string>
+    {} as Record<string, any>
   );
 
-  if (SELF_CLOSE_TAGS.includes(element.tagName)) {
-    if (element.tagName === "img" || element.tagName === "picture") {
-      return <NextImage attribute={attributes} />;
-    } else if (element.tagName === "source") {
-      return <NextImage attribute={attributes} />;
-    } else if (element.tagName === "input") {
-      return <Input attribute={attributes} />;
-    } else if (element.tagName === "hr") {
-      return <HR attribute={attributes} />;
-    } else if (element.tagName === "br") {
-      return <BR attribute={attributes} />;
-    } else return React.createElement(element.tagName, attributes);
-  } else {
-    if (element.tagName === "div") {
-      return (
-        <Div attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </Div>
-      );
-    } else if (element.tagName === "script") {
-      return (
-        <NextScript attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </NextScript>
-      );
-    } else if (element.tagName === "a") {
-      return (
-        <A attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </A>
-      );
-    } else if (element.tagName === "article") {
-      return (
-        <Article attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </Article>
-      );
-    } else if (element.tagName === "button") {
-      return (
-        <Button attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </Button>
-      );
-    } else if (element.tagName === "footer") {
-      return (
-        <Footer attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </Footer>
-      );
-    } else if (element.tagName === "path") {
-      return (
-        <Path attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </Path>
-      );
-    } else if (element.tagName === "section") {
-      return (
-        <Section attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </Section>
-      );
-    } else if (element.tagName === "span") {
-      return (
-        <Span attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </Span>
-      );
-    } else if (element.tagName === "svg") {
-      return (
-        <Svg attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </Svg>
-      );
-    } else if (element.tagName === "p") {
-      return (
-        <P attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </P>
-      );
-    } else if (element.tagName === "h1") {
-      return (
-        <H1 attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </H1>
-      );
-    } else if (element.tagName === "h2") {
-      return (
-        <H2 attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </H2>
-      );
-    } else if (element.tagName === "h3") {
-      return (
-        <H3 attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </H3>
-      );
-    } else if (element.tagName === "h4") {
-      return (
-        <H4 attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </H4>
-      );
-    } else if (element.tagName === "h5") {
-      return (
-        <H5 attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </H5>
-      );
-    } else if (element.tagName === "h6") {
-      return (
-        <H6 attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </H6>
-      );
-    } else if (element.tagName === "pre") {
-      return (
-        <Pre attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </Pre>
-      );
-    } else if (element.tagName === "code") {
-      return (
-        <Code attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </Code>
-      );
-    } else if (element.tagName === "figure") {
-      return (
-        <Figure attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </Figure>
-      );
-    } else if (element.tagName === "strong") {
-      return (
-        <Strong attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </Strong>
-      );
-    } else if (element.tagName === "em") {
-      return (
-        <Em attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </Em>
-      );
-    } else if (element.tagName === "rect") {
-      return (
-        <Rect attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </Rect>
-      );
-    } else if (element.tagName === "figcaption") {
-      return (
-        <Figcaption attribute={attributes}>
-          {element.children.map((child, index) =>
-            child.type === "element" ? (
-              <Element key={index} element={child} />
-            ) : (
-              child.content
-            )
-          )}
-        </Figcaption>
-      );
-    } else {
-      return null;
+  if (attributes.hasOwnProperty("src") && attributes.src.startsWith("data:")) {
+    return null;
+  }
+  if (attributes.hasOwnProperty("href")) {
+    // console.log("src", attributes.href);
+  }
 
-      return React.createElement(
-        element.tagName,
-        attributes,
-        element.children.map((child, index) =>
-          child.type === "element" ? (
-            <Element key={index} element={child} />
-          ) : (
-            child.content
-          )
-        )
-      );
+  // add missing attribute
+  if (element.tagName === "a") {
+    if (!attributes.hasOwnProperty("href") || !attributes.href) {
+      attributes.href = "#";
     }
+    if (!attributes.hasOwnProperty("title") || !attributes.title) {
+      attributes.title = "News 18";
+    }
+
+    if (
+      element.content?.startsWith("<svg") ||
+      element.content?.startsWith("<path") ||
+      element.content?.startsWith("<img")
+    ) {
+      // console.log("element.content", element.content);
+
+      element.content = element.content + "News 18---------";
+    }
+    attributes.rel = "noopener";
+    attributes.target = "_blank";
+  }
+  // add missing content in button
+  else if (
+    element.tagName === "button" &&
+    !element.hasOwnProperty("content") &&
+    element.children.length === 0
+  ) {
+    element.children = [
+      {
+        type: "text",
+        content: ".",
+        tagName: "span",
+        attributes: [
+          { key: "class", value: "whitespace-nowrap font-semibold" },
+        ],
+        children: [],
+      },
+    ];
+  } else if (element.tagName === "h4") {
+    element.tagName = "p";
+  }
+
+  // script tag
+  if (element.tagName === "script") {
+    // console.log("script tag", element);
+    // return <script {...attributes} defer />;
+    return null;
+  }
+
+  // image tag
+  else if (element.tagName === "img") {
+    let Priority: boolean = false;
+
+    if (attributes?.src?.startsWith("http")) {
+      const imageUrl: URL = new URL(attributes.src);
+
+      const options: object = {
+        method: "HEAD",
+        host: imageUrl.hostname,
+        path: imageUrl.pathname,
+      };
+
+      const req: ClientRequest = https.request(
+        options,
+        (res: IncomingMessage) => {
+          if (res && res.statusCode && res?.statusCode >= 400) {
+            return null;
+          }
+          if (
+            res.headers["content-length"] !== undefined &&
+            parseInt(res.headers["content-length"]) >= 100000
+          ) {
+            Priority = true;
+          }
+        }
+      );
+
+      req.end();
+    }
+
+    return <NextImage Priority={Priority} attributes={attributes} />;
+  }
+
+  // meta and link tags
+  else if (element.tagName === "meta" || element.tagName === "link") {
+    // this is not working
+    // return <Head>{React.createElement(element.tagName, attributes)}</Head>;
+
+    if (element.tagName === "meta") {
+      if (!attributes.hasOwnProperty("content")) {
+        attributes.content = "stack overflow";
+        console.log("meta tag without content", attributes);
+      } else if (!attributes.hasOwnProperty("name")) {
+        attributes.name = "stack overflow";
+        console.log("meta tag without name", attributes);
+      }
+      // console.log("meta tag", attributes);
+
+      return <meta {...attributes} />;
+    } else {
+      return <link {...attributes} />;
+    }
+  }
+
+  // self closing tags
+  else if (
+    !element.hasOwnProperty("children") ||
+    element.children.length === 0
+  ) {
+    return React.createElement(element.tagName, attributes);
+  }
+
+  // all other tags
+  else {
+    return React.createElement(
+      element.tagName,
+      attributes,
+      element?.children
+        ? element?.children?.map((child, index) =>
+            child.type === "element" ? (
+              <Element key={index} element={child} />
+            ) : (
+              child.content
+            )
+          )
+        : element?.content
+          ? element.content
+          : null
+    );
   }
 };
 
 export const CustomBody = ({ bodyJson }: CustomHeadPropsType) => {
   return (
     <div className={roboto.className}>
-      {bodyJson.children.map((child, index) =>
+      {bodyJson?.children?.map((child, index) =>
         child.type === "element" ? (
           <Element key={index} element={child} />
         ) : (

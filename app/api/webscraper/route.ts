@@ -1,29 +1,31 @@
-import { NextResponse } from "next/server";
-import puppeteer, { HTTPResponse } from "puppeteer";
+import { NextRequest, NextResponse } from "next/server";
+import puppeteer, { Browser, HTTPResponse, Page } from "puppeteer";
 import { HTTPRequest } from "puppeteer";
 import { WebPageData } from "@/utils/InterfaceType";
-import {
-  INCLUDED_DOMAINS,
-  INCLUDED_RESOURCE_TYPE,
-} from "@/utils/WebScrapperContants";
+import { INCLUDED_RESOURCE_TYPE } from "@/utils/WebScrapperContants";
 
-export async function GET() {
-  const url =
-    "https://medium.com/nerd-for-tech/workflow-for-switching-github-accounts-in-your-terminal-d87e50bb5511";
-  // const url = "https://www.scaler.com/topics/default-argument-in-cpp/";
+export async function GET(request: NextRequest) {
+  const urlQueryObject = new URL(request.url);
+  const searchParams = new URLSearchParams(urlQueryObject.search);
+  const url: string = searchParams.get("url") as string;
+  const domainName: string = new URL(url).hostname;
 
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
+  const browser: Browser = await puppeteer.launch();
+  const page: Page = await browser.newPage();
+
+  await page.setUserAgent(
+    "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36"
+  );
 
   await page.setRequestInterception(true);
 
   let pageData: WebPageData[] = [];
 
   page.on("request", (req: HTTPRequest) => {
-    const url = new URL(req.url());
+    const url: URL = new URL(req.url());
     if (
       !INCLUDED_RESOURCE_TYPE.includes(req.resourceType()) ||
-      !INCLUDED_DOMAINS.includes(url.hostname)
+      url.hostname !== domainName
     ) {
       return req.abort();
     }
@@ -45,7 +47,7 @@ export async function GET() {
 
     try {
       temp.responseText = await response.text();
-    } catch (error: any) {
+    } catch (error: object | any) {
       temp.error = error.message;
     }
 

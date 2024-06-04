@@ -6,6 +6,7 @@ import { StyleTagList } from "./StyleTagList";
 import { ScriptTagList } from "./ScriptTagList";
 import { Inter } from "next/font/google";
 import { Metadata } from "next";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,23 +15,23 @@ interface CustomHeadPropsType {
 }
 
 export const CustomHead = ({ headJson }: CustomHeadPropsType) => {
-  const metaElements: HtmlElementToJsonType[] = headJson.children?.filter(
+  const metaElements: HtmlElementToJsonType[] = headJson?.children?.filter(
     (child) => child.tagName === "meta"
   );
 
-  const linkElements: HtmlElementToJsonType[] = headJson.children?.filter(
+  const linkElements: HtmlElementToJsonType[] = headJson?.children?.filter(
     (child) => child.tagName === "link"
   );
 
-  const styleElements: HtmlElementToJsonType[] = headJson.children?.filter(
+  const styleElements: HtmlElementToJsonType[] = headJson?.children?.filter(
     (child) => child.tagName === "style"
   );
 
-  const scriptElements: HtmlElementToJsonType[] = headJson.children?.filter(
+  const scriptElements: HtmlElementToJsonType[] = headJson?.children?.filter(
     (child) => child.tagName === "script"
   );
 
-  const titleElement: HtmlElementToJsonType = headJson.children?.find(
+  const titleElement: HtmlElementToJsonType = headJson?.children?.find(
     (element) =>
       element.tagName === "title" &&
       element.children.find((child) => child.content)
@@ -41,7 +42,13 @@ export const CustomHead = ({ headJson }: CustomHeadPropsType) => {
       (child) => child.content
     ) as HtmlElementToJsonType;
 
-  console.log("title element", titleElementContent);
+  // console.log(
+  //   "title element",
+  //   linkElements,
+  //   styleElements,
+  //   scriptElements,
+  //   titleElementContent?.content
+  // );
 
   return (
     <>
