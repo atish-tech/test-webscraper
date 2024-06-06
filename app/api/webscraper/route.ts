@@ -10,15 +10,11 @@ export async function GET(request: NextRequest) {
   const url: string = searchParams.get("url") as string;
   const domainName: string = new URL(url).hostname;
 
-  console.log("URL: ", url);
-  console.log("Domain Name: ", domainName);
-
   const browser: Browser = await puppeteer.launch();
   const page: Page = await browser.newPage();
 
-  await page.setUserAgent(
-    "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36"
-  );
+  const userAgent: string = request.headers.get("user-agent") as string;
+  await page.setUserAgent(userAgent);
 
   await page.setRequestInterception(true);
 
