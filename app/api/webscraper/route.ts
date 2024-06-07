@@ -11,8 +11,9 @@ export async function GET(request: NextRequest) {
   const domainName: string = new URL(url).hostname;
 
   const browser: Browser = await puppeteer.launch({
-    args: chromium.args,
     executablePath: await chromium.executablePath,
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
     headless: chromium.headless,
   });
   const page: Page = await browser.newPage();
