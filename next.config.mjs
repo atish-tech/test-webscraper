@@ -24,11 +24,21 @@ const nextConfig = {
       "static-assets-web.flixcart.com",
     ],
   },
-  devtool: "source-map",
+  // devtool: "source-map",
   typescript: {
     ignoreBuildErrors: true,
   },
-  ignoreBuildErrors: true,
+  // ignoreBuildErrors: true,
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Add a new rule to exclude .map files
+    config.module.rules.push({
+      test: /\.js\.map$/,
+      use: 'ignore-loader',
+    });
+
+    // Important: return the modified config
+    return config;
+  },
 };
 
 export default nextConfig;
