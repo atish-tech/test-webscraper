@@ -39,6 +39,9 @@ const nextConfig = {
     // Important: return the modified config
     return config;
   },
+  experimental: {
+    serverComponentsExternalPackages: ["puppeteer-core"],
+  },
 };
 
 export default nextConfig;

@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import chromium from 'chrome-aws-lambda';
+// import chromium from 'chrome-aws-lambda';
+import chromium from "@sparticuz/chromium-min";
 import puppeteer, { Browser, HTTPRequest, HTTPResponse, Page } from 'puppeteer-core';
 import { WebPageData } from "@/utils/InterfaceType";
 import { INCLUDED_RESOURCE_TYPE } from "@/utils/WebScrapperContants";
+
+const chromiumPack = "https://github.com/Sparticuz/chromium/releases/download/v121.0.0/chromium-v121.0.0-pack.tar"
 
 export async function GET(request: NextRequest) {
   const urlQueryObject = new URL(request.url);
@@ -11,10 +14,10 @@ export async function GET(request: NextRequest) {
   const domainName: string = new URL(url).hostname;
 
   const browser: Browser = await puppeteer.launch({
-    executablePath: await chromium.executablePath,
+    executablePath: await chromium.executablePath(chromiumPack),
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
-    headless: chromium.headless,
+    headless: true
   });
   const page: Page = await browser.newPage();
 
